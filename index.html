@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0d14">
+  <meta name="description" content="طريقي - نظم يومك وأهدافك ومصاريفك">
+  <title>TARIKI | طريقي</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Cairo',sans-serif;background:#0b0d14;color:#fff;min-height:100vh}
+    header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #202432}
+    .logo{font-size:25px;font-weight:800;color:#a78bfa}.logo span{color:white}
+    .profile{background:#1b2030;padding:9px 15px;border-radius:30px;font-size:12px}
+    .container{max-width:1050px;margin:auto;padding:28px 18px}
+    .welcome{background:linear-gradient(120deg,#33216d,#171b39,#121a30);border:1px solid #41356d;border-radius:22px;padding:27px;margin-bottom:22px}
+    .welcome h1{font-size:26px;margin-bottom:7px}.welcome p{color:#c2b9e8;font-size:14px}
+    .date{color:#aaa;margin-top:13px;font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0}
+    .card,.section{background:#141824;border:1px solid #252b3a;border-radius:18px;padding:19px}
+    .card h3{font-size:13px;color:#aaa;margin-bottom:8px}.number{font-size:25px;font-weight:800;color:#a78bfa}
+    .tabs{display:flex;gap:8px;overflow-x:auto;margin:25px 0 17px;padding-bottom:5px}
+    .tab{background:#191e2b;color:#aaa;border:1px solid #292f40;padding:10px 15px;border-radius:12px;font-family:inherit;cursor:pointer;white-space:nowrap}
+    .tab.active{background:#7354d9;color:white;border-color:#7354d9}
+    .section{display:none}.section.active{display:block}.section h2{font-size:19px;margin-bottom:15px}
+    input,textarea{width:100%;background:#0c101a;border:1px solid #303749;color:white;padding:12px;border-radius:10px;font-family:inherit;margin-bottom:10px;outline:none}
+    button.action{background:#7656e7;color:white;border:0;border-radius:10px;padding:11px 17px;font-family:inherit;cursor:pointer;font-weight:bold}
+    .item{background:#1b2030;border-radius:12px;padding:12px;margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:9px}
+    .done{text-decoration:line-through;opacity:.5}.delete{background:#3a2029;color:#ff8a9c;border:0;padding:7px 10px;border-radius:8px;cursor:pointer}
+    .challenge{background:#211c3c;padding:15px;border-radius:13px;margin-bottom:10px;border:1px solid #41346c}
+    .challenge p{color:#c7c0df;font-size:13px;margin-top:4px}
+    footer{text-align:center;padding:28px;color:#626a7c;font-size:12px}
+    #installBtn{display:none;background:#9b82ff;color:#111;border:0;border-radius:10px;padding:9px 13px;font-family:inherit;font-weight:800;cursor:pointer}
+    .hint{font-size:12px;color:#9ba3b8;margin-top:12px}
+    @media(max-width:620px){.grid{grid-template-columns:1fr 1fr}.welcome h1{font-size:21px}header{padding:17px 5%}.container{padding:19px 13px}.profile{font-size:10px}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="logo">TARIKI<span>.</span></div>
+  <div style="display:flex;align-items:center;gap:9px">
+    <button id="installBtn">تثبيت التطبيق ⬇</button>
+    <div class="profile">خطوة صغيرة نحو الأفضل 🚀</div>
+  </div>
+</header>
+<main class="container">
+  <section class="welcome">
+    <h1>مرحبا بك في طريقي 👋</h1>
+    <p>مستقبلك كيتبنى بخطوات صغيرة كل يوم.</p>
+    <div class="date" id="date"></div>
+  </section>
+
+  <div class="grid">
+    <div class="card"><h3>📋 المهام المكتملة</h3><div class="number" id="completed">0</div></div>
+    <div class="card"><h3>🎯 أهدافي</h3><div class="number" id="goalsCount">0</div></div>
+    <div class="card"><h3>💰 مصاريفي</h3><div class="number" id="expenses">0 DH</div></div>
+  </div>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="tasks">📋 مهامي</button>
+    <button class="tab" data-tab="goals">🎯 أهدافي</button>
+    <button class="tab" data-tab="money">💰 فلوسي</button>
+    <button class="tab" data-tab="challenge">🔥 تحدياتي</button>
+    <button class="tab" data-tab="notes">📝 ملاحظاتي</button>
+  </nav>
+
+  <section class="section active" id="tasks">
+    <h2>📋 تنظيم يومك</h2>
+    <input id="taskInput" placeholder="شنو خاصك تدير اليوم؟">
+    <button class="action" id="addTaskBtn">+ إضافة مهمة</button><div id="taskList"></div>
+  </section>
+  <section class="section" id="goals">
+    <h2>🎯 أهدافك المستقبلية</h2>
+    <input id="goalInput" placeholder="مثلا: تعلم البرمجة">
+    <button class="action" id="addGoalBtn">+ إضافة هدف</button><div id="goalList"></div>
+  </section>
+  <section class="section" id="money">
+    <h2>💰 تتبع مصاريفك</h2>
+    <input id="moneyName" placeholder="شنو صرفتي؟">
+    <input id="moneyAmount" type="number" min="0" step="0.01" placeholder="المبلغ بالدرهم">
+    <button class="action" id="addMoneyBtn">+ تسجيل المصروف</button>
+    <div id="moneyList"></div>
+    <div class="item"><b>مجموع المصاريف</b><b id="totalMoney">0 DH</b></div>
+  </section>
+  <section class="section" id="challenge">
+    <h2>🔥 تحديات تطوير الذات</h2>
+    <div class="challenge"><b>📚 تحدي القراءة</b><p>قرا 10 صفحات من كتاب اليوم.</p></div>
+    <div class="challenge"><b>💻 تحدي التكنولوجيا</b><p>تعلم معلومة جديدة فالتكنولوجيا.</p></div>
+    <div class="challenge"><b>🌍 تحدي اللغات</b><p>تعلم 5 كلمات جديدة بالإنجليزية.</p></div>
+    <div class="challenge"><b>🧠 تحدي التركيز</b><p>خصص 25 دقيقة لمهمة وحدة بلا تشتيت.</p></div>
+  </section>
+  <section class="section" id="notes">
+    <h2>📝 دفتر أفكارك</h2>
+    <textarea id="noteInput" rows="7" placeholder="كتب أفكارك هنا..."></textarea>
+    <button class="action" id="saveNoteBtn">حفظ الملاحظات</button>
+    <p id="saved" class="hint" aria-live="polite"></p>
+  </section>
+  <p class="hint">معلوماتك كتتحفظ فهاد الجهاز والمتصفح فقط. ما كايناش مزامنة بين الأجهزة فهاد النسخة.</p>
+</main>
+<footer>TARIKI © 2026 — خطوة صغيرة اليوم، مستقبل أفضل غدا.</footer>
+<script>
+const $ = id => document.getElementById(id);
+const read = key => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } };
+const write = (key,value) => localStorage.setItem(key,JSON.stringify(value));
+let tasks=read('tariki_tasks'), goals=read('tariki_goals'), money=read('tariki_money');
+$('date').textContent=new Date().toLocaleDateString('ar-MA',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');$(btn.dataset.tab).classList.add('active');
+}));
+function safe(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function render(){
+ $('taskList').innerHTML=tasks.map((t,i)=>`<div class="item"><span class="${t.done?'done':''}" data-task="${i}" style="cursor:pointer">☑ ${safe(t.name)}</span><button class="delete" data-del-task="${i}">حذف</button></div>`).join('');
+ $('goalList').innerHTML=goals.map((g,i)=>`<div class="item"><span class="${g.done?'done':''}" data-goal="${i}" style="cursor:pointer">🎯 ${safe(g.name)}</span><button class="delete" data-del-goal="${i}">حذف</button></div>`).join('');
+ $('moneyList').innerHTML=money.map((m,i)=>`<div class="item"><span>${safe(m.name)} <small>${m.amount} DH</small></span><button class="delete" data-del-money="${i}">حذف</button></div>`).join('');
+ const total=money.reduce((s,m)=>s+m.amount,0);
+ $('completed').textContent=tasks.filter(t=>t.done).length;
+ $('goalsCount').textContent=goals.length;
+ $('expenses').textContent=total.toFixed(2)+' DH';
+ $('totalMoney').textContent=total.toFixed(2)+' DH';
+}
+$('addTaskBtn').onclick=()=>{let v=$('taskInput').value.trim();if(!v)return;tasks.push({name:v,done:false});write('tariki_tasks',tasks);$('taskInput').value='';render();};
+$('addGoalBtn').onclick=()=>{let v=$('goalInput').value.trim();if(!v)return;goals.push({name:v,done:false});write('tariki_goals',goals);$('goalInput').value='';render();};
+$('addMoneyBtn').onclick=()=>{let name=$('moneyName').value.trim(),amount=Number($('moneyAmount').value);if(!name||!Number.isFinite(amount)||amount<=0)return;money.push({name,amount});write('tariki_money',money);$('moneyName').value='';$('moneyAmount').value='';render();};
+$('saveNoteBtn').onclick=()=>{localStorage.setItem('tariki_note',$('noteInput').value);$('saved').textContent='✓ تحفطات الملاحظات فهاد الجهاز';};
+$('noteInput').value=localStorage.getItem('tariki_note')||'';
+document.addEventListener('click',e=>{
+ if(e.target.dataset.task!==undefined){let i=+e.target.dataset.task;tasks[i].done=!tasks[i].done;write('tariki_tasks',tasks);render();}
+ if(e.target.dataset.goal!==undefined){let i=+e.target.dataset.goal;goals[i].done=!goals[i].done;write('tariki_goals',goals);render();}
+ if(e.target.dataset.delTask!==undefined){tasks.splice(+e.target.dataset.delTask,1);write('tariki_tasks',tasks);render();}
+ if(e.target.dataset.delGoal!==undefined){goals.splice(+e.target.dataset.delGoal,1);write('tariki_goals',goals);render();}
+ if(e.target.dataset.delMoney!==undefined){money.splice(+e.target.dataset.delMoney,1);write('tariki_money',money);render();}
+});
+render();
+
+// Install prompt (Chrome/Edge on supported devices)
+let installPrompt=null;
+const installBtn=$('installBtn');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;installBtn.style.display='inline-block';});
+installBtn.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installBtn.style.display='none';});
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.log('SW:',err)));}
+</script>
+</body>
+</html>
